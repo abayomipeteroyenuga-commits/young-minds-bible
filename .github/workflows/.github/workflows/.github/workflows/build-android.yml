@@ -1,0 +1,98 @@
+name: Build Young Minds Bible Android
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "lib/**"
+      - "assets/**"
+      - "test/**"
+      - "tool/**"
+      - "pubspec.yaml"
+      - ".github/workflows/build-android.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    name: Build APK and AAB
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Show Flutter version
+        run: flutter --version
+
+      - name: Verify Flutter project
+        run: |
+          test -f pubspec.yaml
+          test -d lib
+
+      - name: Create Android platform files
+        run: |
+          flutter create . \
+            --platforms=android \
+            --project-name=young_minds_bible \
+            --org=org.pastorabayomi
+
+      - name: Install Flutter packages
+        run: flutter pub get
+
+      - name: Prepare full offline Bible
+        run: |
+          python3 tool/prepare_bible.py
+
+      - name: Verify full Bible
+        run: |
+          python3 tool/verify_bible.py
+
+      - name: Analyze Flutter source
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Build release AAB
+        run: flutter build appbundle --release
+
+      - name: Verify Android outputs
+        run: |
+          test -f build/app/outputs/flutter-apk/app-release.apk
+          test -f build/app/outputs/bundle/release/app-release.aab
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: young-minds-bible-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload Play Store AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: young-minds-bible-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 30
