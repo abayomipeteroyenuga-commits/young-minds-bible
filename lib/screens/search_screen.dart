@@ -16,23 +16,13 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController controller = TextEditingController();
-  final BibleService bibleService = BibleService();
   List<VerseRef> results = [];
   bool searched = false;
-  bool searching = false;
 
-  Future<void> run(String query) async {
-    final trimmed = query.trim();
-    if (trimmed.isEmpty || searching) return;
-    setState(() => searching = true);
-    // Yield one frame so the loading state paints before a full-text scan.
-    await Future<void>.delayed(Duration.zero);
-    final found = bibleService.search(widget.library, trimmed);
-    if (!mounted) return;
+  void run(String query) {
     setState(() {
-      results = found;
+      results = BibleService().search(widget.library, query);
       searched = true;
-      searching = false;
     });
   }
 
@@ -79,9 +69,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
         Expanded(
-          child: searching
-              ? const Center(child: CircularProgressIndicator())
-              : results.isEmpty
+          child: results.isEmpty
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(28),

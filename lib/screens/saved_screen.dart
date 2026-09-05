@@ -11,7 +11,18 @@ class SavedScreen extends StatelessWidget {
 
   List<VerseRef> _refs(Set<String> ids) {
     if (ids.isEmpty) return const <VerseRef>[];
-    return ids.map(_refFromId).whereType<VerseRef>().toList(growable: false);
+    final remaining = ids.toSet();
+    final found = <VerseRef>[];
+    for (final book in library.books) {
+      for (final chapter in book.chapters) {
+        for (final verse in chapter.verses) {
+          final ref = VerseRef(book.name, chapter.number, verse.number, verse.text);
+          if (remaining.remove(ref.id)) found.add(ref);
+          if (remaining.isEmpty) return found;
+        }
+      }
+    }
+    return found;
   }
 
   VerseRef? _refFromId(String id) {

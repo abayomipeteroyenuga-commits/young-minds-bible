@@ -75,3 +75,6 @@ Tapping a verse opens Bookmark, Highlight, Note and Share actions.
 ## Production checks
 
 Before Play Store submission, add final launcher icons/screenshots, configure release signing, complete the Play Console Data Safety/content-rating/target-audience declarations, publish an accurate privacy policy, and test the release on multiple real Android devices.
+
+## Why GitHub shows Dart
+Flutter applications are primarily written in **Dart**, so GitHub normally labels this repository as Dart. Flutter is the app framework, not a separate GitHub programming-language label. The native Android host is included under `android/` with Kotlin and Gradle files, and GitHub Actions builds Android APK/AAB artifacts.
