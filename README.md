@@ -35,7 +35,7 @@ On an internet-enabled development computer or GitHub Actions, `tool/fetch_full_
 
 The resulting APK/AAB packages that file inside the app. After a user installs the app, Genesis through Revelation, chapter navigation and search work offline.
 
-The small `sample_bible.json` exists only as a development fallback if somebody opens the source before preparing the production asset.
+`sample_bible.json` is retained only as a reference/test fixture. The Flutter app no longer falls back to it: production startup requires a verified complete 66-book KJV asset.
 
 ## Easiest Android build
 
@@ -78,3 +78,7 @@ Before Play Store submission, add final launcher icons/screenshots, configure re
 
 ## Why GitHub shows Dart
 Flutter applications are primarily written in **Dart**, so GitHub normally labels this repository as Dart. Flutter is the app framework, not a separate GitHub programming-language label. The native Android host is included under `android/` with Kotlin and Gradle files, and GitHub Actions builds Android APK/AAB artifacts.
+
+
+## GitHub language display
+GitHub normally reports Flutter repositories as **Dart** because Flutter application code is written in Dart. The Android host project is under `android/`; the CI workflow regenerates/verifies the Gradle wrapper before Android compilation.

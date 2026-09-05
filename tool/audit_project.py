@@ -34,7 +34,6 @@ def main() -> int:
         'lib/screens/saved_screen.dart',
         'lib/screens/plans_screen.dart',
         'lib/screens/more_screen.dart',
-        'assets/data/sample_bible.json',
         'assets/data/book_metadata.json',
         'assets/data/kjv.json',
         'tool/fetch_full_bible.py',
@@ -60,12 +59,7 @@ def main() -> int:
         fail(f'Invalid book metadata: {exc}', errors)
         metadata, chapter_total = [], 0
 
-    try:
-        sample = json.loads((ROOT / 'assets/data/sample_bible.json').read_text(encoding='utf-8'))
-        if not sample.get('books'):
-            fail('Development fallback Bible is empty', errors)
-    except Exception as exc:
-        fail(f'Invalid sample_bible.json: {exc}', errors)
+
 
     books = chapters = verses = empty = 0
     try:
@@ -90,7 +84,7 @@ def main() -> int:
         fail(f'Invalid kjv.json: {exc}', errors)
 
     pubspec = (ROOT / 'pubspec.yaml').read_text(encoding='utf-8') if (ROOT / 'pubspec.yaml').exists() else ''
-    for asset in ('assets/data/kjv.json', 'assets/data/book_metadata.json', 'assets/data/sample_bible.json'):
+    for asset in ('assets/data/kjv.json', 'assets/data/book_metadata.json'):
         if asset not in pubspec:
             fail(f'pubspec missing asset {asset}', errors)
 
@@ -116,8 +110,13 @@ def main() -> int:
         if marker not in chapter_screen:
             fail(f'Chapter boundary/progression safeguard missing: {marker}', errors)
 
+    bible_service = (ROOT / 'lib/services/bible_service.dart').read_text(encoding='utf-8')
+    for marker in ('library.books.length != 66', 'chapters != 1189', 'verses < 31000'):
+        if marker not in bible_service:
+            fail(f'Runtime full-Bible validation missing: {marker}', errors)
+
     workflow = (ROOT / '.github/workflows/build-android.yml').read_text(encoding='utf-8')
-    for step in ('fetch_full_bible.py', 'verify_full_bible.py', 'flutter analyze', 'flutter test', 'flutter build apk --release', 'flutter build appbundle --release'):
+    for step in ('flutter create . --platforms=android', 'gradle-wrapper.jar', 'fetch_full_bible.py', 'verify_full_bible.py', 'flutter analyze', 'flutter test', 'flutter build apk --release', 'flutter build appbundle --release'):
         if step not in workflow:
             fail(f'CI workflow missing {step}', errors)
 
