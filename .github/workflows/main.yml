@@ -1,0 +1,286 @@
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.idea/
+.vscode/
+*.iml
+android/.gradle/
+android/local.properties
+android/key.properties
+*.jks
+*.keystore
+
+include: package:flutter_lints/flutter.yaml
+linter:
+  rules:
+    avoid_print: true
+
+# Bible data source
+
+Young Minds Bible is configured to bundle the **King James Version (KJV)** locally for offline reading.
+
+Build-time source: Midvash `bible-data` KJV 1769 corpus. The source repository identifies this KJV edition as public domain and provides a 66-book Protestant canon in JSON/SQLite formats.
+
+The app's `tool/fetch_full_bible.py` fetches and normalises the corpus **before compilation**. `tool/verify_full_bible.py` refuses a production build unless the local asset contains 66 books, 1,189 chapters, more than 31,000 non-empty verses, and valid verse text.
+
+The finished APK/AAB contains the resulting `assets/data/kjv.json`; end users therefore do not need internet to read, search, bookmark, highlight, or make notes.
+
+# Build the Android APK and AAB with GitHub Actions
+
+This repository is a Flutter app. GitHub may label the repository language as **Dart**; that is normal.
+
+## Upload
+Upload the extracted project contents to the repository root. The Code tab should show at least:
+
+- `.github/workflows/build-android.yml`
+- `lib/`
+- `assets/`
+- `tool/`
+- `pubspec.yaml`
+
+Do not upload only the ZIP file.
+
+## Build
+1. Open the repository on GitHub.
+2. Select **Actions**.
+3. Select **Build Young Minds Bible Android**.
+4. Click **Run workflow** and choose `main`.
+5. When the run finishes successfully, open it and scroll to **Artifacts**.
+6. Download `young-minds-bible-apk` to get `app-release.apk` for Android phone testing.
+7. Download `young-minds-bible-aab` to get `app-release.aab` for the Google Play release pipeline.
+
+The workflow recreates the Android host using the same stable Flutter SDK that performs the build, fetches and validates the complete offline KJV corpus, runs `flutter analyze` and `flutter test`, then produces both Android artifacts.
+
+## Important Play Store note
+The generated AAB is a release build for build/testing purposes. Before final Google Play publication, configure your permanent upload signing key and Play Console app-signing setup. Never commit keystore passwords or key files to GitHub.
+
+# Why GitHub says Dart
+
+Young Minds Bible is a Flutter application. Flutter app source is primarily written in Dart, so GitHub Linguist normally reports **Dart** as the repository language. GitHub does not use a separate “Flutter” programming-language label.
+
+The Android host project is under `android/`. The release workflow is `.github/workflows/build-android.yml`.
+
+A valid repository root should contain `pubspec.yaml`, `lib/`, `android/`, `.github/`, `assets/`, and `test/`.
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Young Minds Bible Preview</title>
+<style>
+:root{--bg:#f7f4ec;--card:#fff;--ink:#202124;--muted:#6d6f73;--accent:#654ea3;--accent2:#e9e3f8;--line:#e7e1d6}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:78px}.top{padding:22px 20px 12px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:800;font-size:22px}.tag{font-size:12px;color:var(--muted)}
+.hero{margin:6px 16px 16px;padding:20px;border-radius:24px;background:linear-gradient(135deg,#efe8ff,#fff7df);border:1px solid var(--line)}.hero h1{margin:0 0 6px;font-size:26px}.hero p{margin:0;color:var(--muted);line-height:1.5}.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer}.primary{background:var(--accent);color:#fff}.ghost{background:var(--accent2);color:#4a3578}.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.section{padding:0 16px 18px}.section h2{font-size:17px;margin:0 0 10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;cursor:pointer}.card b{display:block;margin-bottom:4px}.small{font-size:13px;color:var(--muted)}
+.list{display:grid;gap:10px}.book{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer}.pill{background:#f1edf9;padding:4px 8px;border-radius:999px;font-size:12px;color:#5d477f}.chapters{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.chapter{aspect-ratio:1;border-radius:14px;border:1px solid var(--line);background:var(--card);font-weight:700;cursor:pointer}
+.reader{padding:0 18px}.reader h2{margin-top:6px}.verse{font-size:18px;line-height:1.65;margin:10px 0;padding:8px 10px;border-radius:12px;cursor:pointer}.verse:hover{background:#fff}.verse.selected{background:#efe8ff;outline:2px solid #d8c9ff}.num{font-size:12px;font-weight:800;color:var(--accent);vertical-align:super;margin-right:5px}.actions{position:sticky;bottom:82px;background:rgba(247,244,236,.96);backdrop-filter:blur(6px);padding:10px 0;display:flex;gap:8px;overflow:auto}.actions .btn{white-space:nowrap;padding:10px 12px}
+.bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(480px,100%);height:66px;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:20}.nav{border:0;background:none;font-size:12px;color:var(--muted);cursor:pointer}.nav strong{display:block;font-size:20px;margin-bottom:2px}.nav.active{color:var(--accent)}
+.back{border:0;background:none;font-size:15px;font-weight:700;cursor:pointer;color:var(--accent);padding:0}.hidden{display:none}.search{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:14px;font-size:16px;background:#fff}.notice{margin:0 16px 16px;padding:12px 14px;border-radius:14px;background:#fff7d6;border:1px solid #eadb92;font-size:13px;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><div><div class="brand">Young Minds Bible</div><div class="tag">Read • Understand • Grow</div></div><div>📖</div></div>
+  <div id="screen"></div>
+  <nav class="bottom">
+    <button class="nav active" onclick="home()"><strong>⌂</strong>Home</button>
+    <button class="nav" onclick="books()"><strong>📚</strong>Bible</button>
+    <button class="nav" onclick="search()"><strong>⌕</strong>Search</button>
+    <button class="nav" onclick="saved()"><strong>★</strong>Saved</button>
+  </nav>
+</div>
+<script>
+const sample={
+  Genesis:{chapters:{1:[
+    'In the beginning God created the heaven and the earth.',
+    'And the earth was without form, and void; and darkness was upon the face of the deep.',
+    'And God said, Let there be light: and there was light.',
+    'And God saw the light, that it was good: and God divided the light from the darkness.',
+    'And God called the light Day, and the darkness he called Night.'
+  ],2:['Thus the heavens and the earth were finished, and all the host of them.']},count:50},
+  Psalms:{chapters:{23:['The LORD is my shepherd; I shall not want.','He maketh me to lie down in green pastures: he leadeth me beside the still waters.','He restoreth my soul: he leadeth me in the paths of righteousness for his name\'s sake.']},count:150},
+  Matthew:{chapters:{5:['And seeing the multitudes, he went up into a mountain: and when he was set, his disciples came unto him.']},count:28},
+  John:{chapters:{3:['There was a man of the Pharisees, named Nicodemus, a ruler of the Jews:','','For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.']},count:21},
+  Revelation:{chapters:{22:['And he shewed me a pure river of water of life, clear as crystal, proceeding out of the throne of God and of the Lamb.']},count:22}
+};
+const meta=[['Genesis',50,'Old Testament'],['Exodus',40,'Old Testament'],['Psalms',150,'Old Testament'],['Proverbs',31,'Old Testament'],['Isaiah',66,'Old Testament'],['Matthew',28,'New Testament'],['Mark',16,'New Testament'],['Luke',24,'New Testament'],['John',21,'New Testament'],['Acts',28,'New Testament'],['Romans',16,'New Testament'],['Revelation',22,'New Testament']];
+let current={book:'Genesis',chapter:1};
+const store={
+ get(k,d){try{return JSON.parse(localStorage.getItem('ymb_'+k))??d}catch(e){return d}},
+ set(k,v){try{localStorage.setItem('ymb_'+k,JSON.stringify(v))}catch(e){}}
+};
+let selectedVerse=null;
+function refKey(book,chapter,verse){return `${book} ${chapter}:${verse}`}
+function toggleSaved(kind,ref){let a=store.get(kind,[]);let i=a.indexOf(ref); if(i>=0)a.splice(i,1);else a.push(ref);store.set(kind,a);reader(current.book,current.chapter)}
+function addNote(ref){let notes=store.get('notes',{});let v=prompt('Write a private note for '+ref,notes[ref]||'');if(v===null)return;if(v.trim())notes[ref]=v.trim();else delete notes[ref];store.set('notes',notes);reader(current.book,current.chapter)}
+function chooseVerse(ref){selectedVerse=ref;document.querySelectorAll('.verse').forEach(x=>x.classList.toggle('selected',x.dataset.ref===ref));document.getElementById('verseActions').classList.remove('hidden')}
+const el=()=>document.getElementById('screen');
+function setNav(i){document.querySelectorAll('.nav').forEach((n,k)=>n.classList.toggle('active',i===k));}
+function home(){setNav(0);el().innerHTML=`<div class="hero"><h1>Good day 👋</h1><p>Continue exploring God’s Word at your own pace. Your reading position, notes and highlights are designed to stay on your device.</p><div class="row"><button class="btn primary" onclick="(()=>{let x=store.get('last',{book:'Genesis',chapter:1});reader(x.book,x.chapter)})()">Continue reading</button><button class="btn ghost" onclick="books()">Choose a book</button></div></div><div class="notice">OFFLINE PREVIEW: This page runs entirely from this file. Bookmarks, highlights, notes and your last reading point are saved on this device using browser local storage. No local server or internet is required.</div><div class="section"><h2>Today</h2><div class="card" onclick="reader('John',3)"><b>Verse of the Day</b><div class="small">John 3:16</div><p style="line-height:1.5;margin-bottom:0">For God so loved the world...</p></div></div><div class="section"><h2>Quick access</h2><div class="grid"><div class="card" onclick="books()"><b>📚 Read Bible</b><span class="small">Books & chapters</span></div><div class="card" onclick="search()"><b>🔎 Search</b><span class="small">Find a verse</span></div><div class="card" onclick="saved()"><b>★ Saved</b><span class="small">Bookmarks & notes</span></div><div class="card"><b>☾ Reading mode</b><span class="small">Comfortable reading</span></div></div></div>`}
+function books(){setNav(1);el().innerHTML=`<div class="section"><h2>Books of the Bible</h2><div class="list">${meta.map(x=>`<div class="book" onclick="chapters('${x[0]}',${x[1]})"><div><b>${x[0]}</b><div class="small">${x[2]}</div></div><span class="pill">${x[1]} chapters</span></div>`).join('')}</div></div>`}
+function chapters(book,count){current.book=book;el().innerHTML=`<div class="section"><button class="back" onclick="books()">← Books</button><h2>${book}</h2><div class="chapters">${Array.from({length:count},(_,i)=>`<button class="chapter" onclick="reader('${book}',${i+1})">${i+1}</button>`).join('')}</div></div>`}
+function reader(book,chapter){
+ current={book,chapter};store.set('last',{book,chapter});selectedVerse=null;
+ let verses=(sample[book]?.chapters?.[chapter])||['Full chapter text will appear here in the complete offline Android build.'];
+ let bookmarks=store.get('bookmarks',[]), highlights=store.get('highlights',[]), notes=store.get('notes',{});
+ el().innerHTML=`<div class="reader"><button class="back" onclick="chapters('${book}',${sample[book]?.count||meta.find(x=>x[0]===book)?.[1]||1})">← ${book}</button><h2>${book} ${chapter}</h2>${verses.filter(Boolean).map((v,i)=>{let ref=refKey(book,chapter,i+1);return `<div class="verse" data-ref="${ref}" onclick="chooseVerse('${ref.replaceAll("'","\\'")}')" style="${highlights.includes(ref)?'background:#fff0a8;':''}"><span class="num">${i+1}</span>${v}${bookmarks.includes(ref)?' ★':''}${notes[ref]?' 📝':''}</div>`}).join('')}<div id="verseActions" class="actions hidden"><button class="btn ghost" onclick="toggleSaved('bookmarks',selectedVerse)">★ Bookmark</button><button class="btn ghost" onclick="toggleSaved('highlights',selectedVerse)">🖍 Highlight</button><button class="btn ghost" onclick="addNote(selectedVerse)">📝 Note</button></div></div>`}
+function search(){setNav(2);el().innerHTML=`<div class="section"><h2>Search Bible</h2><input class="search" id="q" placeholder="Try John 3:16" onkeydown="if(event.key==='Enter')doSearch()"><div class="row"><button class="btn primary" onclick="doSearch()">Search</button></div><div id="results" class="list" style="margin-top:14px"></div></div>`}
+function doSearch(){let q=document.getElementById('q').value.trim().toLowerCase();let r=document.getElementById('results');if(q.includes('john')&&q.includes('3'))r.innerHTML=`<div class="book" onclick="reader('John',3)"><div><b>John 3:16</b><div class="small">For God so loved the world...</div></div></div>`;else r.innerHTML=`<div class="card"><b>Search preview</b><div class="small">The complete Android build searches the full offline Bible corpus.</div></div>`}
+function saved(){setNav(3);let b=store.get('bookmarks',[]),h=store.get('highlights',[]),n=store.get('notes',{}),last=store.get('last',null);el().innerHTML=`<div class="section"><h2>Saved on this device</h2><div class="card"><b>★ Bookmarks (${b.length})</b><div class="small">${b.join('<br>')||'No bookmarks yet'}</div></div><div class="card" style="margin-top:10px"><b>🖍 Highlights (${h.length})</b><div class="small">${h.join('<br>')||'No highlights yet'}</div></div><div class="card" style="margin-top:10px"><b>📝 Notes (${Object.keys(n).length})</b><div class="small">${Object.entries(n).map(([k,v])=>`<b>${k}</b>: ${v}`).join('<br>')||'No notes yet'}</div></div>${last?`<div class="card" style="margin-top:10px;cursor:pointer" onclick="reader('${last.book}',${last.chapter})"><b>↻ Continue reading</b><div class="small">${last.book} ${last.chapter}</div></div>`:''}</div>`}
+home();
+</script>
+</body></html>
+
+YOUNG MINDS BIBLE — QUICK PREVIEW
+
+To see the interface immediately on a computer:
+1. Open the folder: preview
+2. Double-click: index.html
+
+This preview runs locally in a browser and does not require internet.
+It demonstrates Home, Bible books, chapters, reader, Search and Saved screens.
+
+IMPORTANT:
+The actual Android APK still requires Flutter + Android build tooling.
+The repository contains a GitHub Actions workflow at:
+.github/workflows/build-android.yml
+which is configured to create both APK and AAB in a Flutter-enabled CI environment.
+
+DOUBLE-CLICK OFFLINE_PREVIEW.html
+
+It is a single self-contained file. No server and no internet are required.
+Bookmarks, highlights, notes and last reading position are stored in your browser on this device.
+
+# Play Store Release Checklist — Young Minds Bible
+
+- [ ] Flutter project generates and runs on Android
+- [ ] Full 66-book KJV data has been downloaded into `assets/data/kjv.json`
+- [ ] Search verified with references and keywords
+- [ ] Airplane-mode test passes for reading/search/bookmarks/notes/plans
+- [ ] Unique production application ID confirmed
+- [ ] Version name/code updated
+- [ ] Final app icon and store graphics supplied
+- [ ] Release signing configured securely
+- [ ] Privacy policy published and linked
+- [ ] Data Safety form matches the final build
+- [ ] Target audience / Families answers completed accurately
+- [ ] Content rating completed
+- [ ] Closed/internal testing completed
+- [ ] Release AAB built with `flutter build appbundle --release`
+
+name: young_minds_bible
+description: Young Minds Bible - an offline-first Bible reader for children and teenagers.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  shared_preferences: ^2.3.2
+  share_plus: ^10.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/book_metadata.json
+    - assets/data/kjv.json
+
+# Young Minds Bible — Combined Complete Edition
+
+**Read • Understand • Grow**
+
+Young Minds Bible is an offline-first Flutter Bible reader designed for young readers. The core reading experience has no required login and is designed so the finished Android app can read the Bible without internet.
+
+## What is implemented
+
+- Home dashboard and Verse of the Day
+- Genesis-to-Revelation book/chapter reader architecture
+- Old Testament / New Testament browsing
+- Chapter selector and numbered verses
+- Previous / next chapter navigation across book boundaries
+- Offline full-text search and direct-reference search such as `John 3:16`
+- Bookmarks
+- Highlights
+- Private device-local notes
+- Continue reading
+- Reading plans
+- Adjustable text size and line spacing support
+- Verse-number toggle
+- Dark mode
+- Verse sharing
+- Onboarding
+- Five-tab mobile navigation
+- Local persistence via SharedPreferences
+- Android package starter: `org.pastorabayomi.young_minds_bible`
+- Play Store build workflow
+
+## Full Bible: how offline reading works
+
+The **complete KJV is embedded at build time**, not downloaded by readers.
+
+On an internet-enabled development computer or GitHub Actions, `tool/fetch_full_bible.py` retrieves the public-domain KJV corpus and writes the complete local asset to `assets/data/kjv.json`. `tool/verify_full_bible.py` validates 66 books, 1,189 chapters and 31,000+ non-empty verses before the release is built.
+
+The resulting APK/AAB packages that file inside the app. After a user installs the app, Genesis through Revelation, chapter navigation and search work offline.
+
+`sample_bible.json` is retained only as a reference/test fixture. The Flutter app no longer falls back to it: production startup requires a verified complete 66-book KJV asset.
+
+## Easiest Android build
+
+### Windows
+
+```powershell
+cd young_minds_bible
+.\tool\prepare_project.ps1
+flutter run
+```
+
+### macOS / Linux
+
+```bash
+cd young_minds_bible
+./tool/prepare_project.sh
+flutter run
+```
+
+## Automatic GitHub build
+
+The ZIP includes `.github/workflows/build-android.yml`. Put the project in a GitHub repository and run the **Build Young Minds Bible Android** workflow. It creates/repairs the Android scaffold, embeds and verifies the full KJV, runs Flutter analysis, and produces both:
+
+- `app-release.apk` — install/testing build
+- `app-release.aab` — Google Play Store upload bundle
+
+## Bible navigation seen by users
+
+`Bible` → `Genesis` → `Chapter 1` → verses 1, 2, 3…
+
+or
+
+`Bible` → `John` → `Chapter 3` → verse 16…
+
+Tapping a verse opens Bookmark, Highlight, Note and Share actions.
+
+## Production checks
+
+Before Play Store submission, add final launcher icons/screenshots, configure release signing, complete the Play Console Data Safety/content-rating/target-audience declarations, publish an accurate privacy policy, and test the release on multiple real Android devices.
+
+## Why GitHub shows Dart
+Flutter applications are primarily written in **Dart**, so GitHub normally labels this repository as Dart. Flutter is the app framework, not a separate GitHub programming-language label. The native Android host is included under `android/` with Kotlin and Gradle files, and GitHub Actions builds Android APK/AAB artifacts.
+
+
+## GitHub language display
+GitHub normally reports Flutter repositories as **Dart** because Flutter application code is written in Dart. The Android host project is under `android/`; the CI workflow regenerates/verifies the Gradle wrapper before Android compilation.
