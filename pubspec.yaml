@@ -1,0 +1,26 @@
+name: young_minds_bible
+description: Young Minds Bible - an offline-first Bible reader for children and teenagers.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  shared_preferences: ^2.3.2
+  share_plus: ^10.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/sample_bible.json
+    - assets/data/book_metadata.json
+    - assets/data/kjv.json

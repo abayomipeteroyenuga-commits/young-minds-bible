@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Young Minds Bible</title>
+<style>
+:root{--bg:#f7f4ec;--card:#fff;--ink:#202124;--muted:#6d6f73;--accent:#654ea3;--accent2:#e9e3f8;--line:#e7e1d6;--ok:#e7f7ec;--warn:#fff4d6}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.app{max-width:520px;margin:0 auto;min-height:100vh;background:var(--bg);padding-bottom:78px}.top{padding:22px 20px 12px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:800;font-size:22px}.tag{font-size:12px;color:var(--muted)}
+.hero{margin:6px 16px 16px;padding:20px;border-radius:24px;background:linear-gradient(135deg,#efe8ff,#fff7df);border:1px solid var(--line)}.hero h1{margin:0 0 6px;font-size:26px}.hero p{margin:0;color:var(--muted);line-height:1.5}.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer}.primary{background:var(--accent);color:#fff}.ghost{background:var(--accent2);color:#4a3578}.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.section{padding:0 16px 18px}.section h2{font-size:17px;margin:0 0 10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;cursor:pointer}.card b{display:block;margin-bottom:4px}.small{font-size:13px;color:var(--muted);line-height:1.5}
+.list{display:grid;gap:10px}.book{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer}.pill{background:#f1edf9;padding:4px 8px;border-radius:999px;font-size:12px;color:#5d477f}.chapters{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.chapter{aspect-ratio:1;border-radius:14px;border:1px solid var(--line);background:var(--card);font-weight:700;cursor:pointer}
+.reader{padding:0 18px}.reader h2{margin-top:6px}.verse{font-size:18px;line-height:1.72;margin:10px 0;padding:8px 10px;border-radius:12px;cursor:pointer}.verse:hover{background:#fff}.verse.selected{background:#efe8ff;outline:2px solid #d8c9ff}.num{font-size:12px;font-weight:800;color:var(--accent);vertical-align:super;margin-right:5px}.actions{position:sticky;bottom:82px;background:rgba(247,244,236,.96);backdrop-filter:blur(6px);padding:10px 0;display:flex;gap:8px;overflow:auto}.actions .btn{white-space:nowrap;padding:10px 12px}
+.bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(520px,100%);height:66px;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:20}.nav{border:0;background:none;font-size:12px;color:var(--muted);cursor:pointer}.nav strong{display:block;font-size:20px;margin-bottom:2px}.nav.active{color:var(--accent)}
+.back{border:0;background:none;font-size:15px;font-weight:700;cursor:pointer;color:var(--accent);padding:0}.hidden{display:none}.search{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:14px;font-size:16px;background:#fff}.notice{margin:0 16px 16px;padding:12px 14px;border-radius:14px;background:var(--warn);border:1px solid #eadb92;font-size:13px;line-height:1.5}.notice.ok{background:var(--ok);border-color:#b9ddc3}.progress{height:9px;background:#eee;border-radius:999px;overflow:hidden;margin-top:10px}.progress>div{height:100%;background:var(--accent);width:0%}.center{text-align:center;padding:26px}.status{font-weight:700;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><div><div class="brand">Young Minds Bible</div><div class="tag">Read • Understand • Grow</div></div><div>📖</div></div>
+  <div id="screen"></div>
+  <nav class="bottom">
+    <button class="nav active" onclick="home()"><strong>⌂</strong>Home</button>
+    <button class="nav" onclick="books()"><strong>📚</strong>Bible</button>
+    <button class="nav" onclick="searchScreen()"><strong>⌕</strong>Search</button>
+    <button class="nav" onclick="saved()"><strong>★</strong>Saved</button>
+  </nav>
+</div>
+<script>
+const BOOKS=[
+['Genesis','Gen',50,'Old Testament'],['Exodus','Exod',40,'Old Testament'],['Leviticus','Lev',27,'Old Testament'],['Numbers','Num',36,'Old Testament'],['Deuteronomy','Deut',34,'Old Testament'],['Joshua','Josh',24,'Old Testament'],['Judges','Judg',21,'Old Testament'],['Ruth','Ruth',4,'Old Testament'],['1 Samuel','1Sam',31,'Old Testament'],['2 Samuel','2Sam',24,'Old Testament'],['1 Kings','1Kgs',22,'Old Testament'],['2 Kings','2Kgs',25,'Old Testament'],['1 Chronicles','1Chr',29,'Old Testament'],['2 Chronicles','2Chr',36,'Old Testament'],['Ezra','Ezra',10,'Old Testament'],['Nehemiah','Neh',13,'Old Testament'],['Esther','Esth',10,'Old Testament'],['Job','Job',42,'Old Testament'],['Psalms','Ps',150,'Old Testament'],['Proverbs','Prov',31,'Old Testament'],['Ecclesiastes','Eccl',12,'Old Testament'],['Song of Solomon','Song',8,'Old Testament'],['Isaiah','Isa',66,'Old Testament'],['Jeremiah','Jer',52,'Old Testament'],['Lamentations','Lam',5,'Old Testament'],['Ezekiel','Ezek',48,'Old Testament'],['Daniel','Dan',12,'Old Testament'],['Hosea','Hos',14,'Old Testament'],['Joel','Joel',3,'Old Testament'],['Amos','Amos',9,'Old Testament'],['Obadiah','Obad',1,'Old Testament'],['Jonah','Jonah',4,'Old Testament'],['Micah','Mic',7,'Old Testament'],['Nahum','Nah',3,'Old Testament'],['Habakkuk','Hab',3,'Old Testament'],['Zephaniah','Zeph',3,'Old Testament'],['Haggai','Hag',2,'Old Testament'],['Zechariah','Zech',14,'Old Testament'],['Malachi','Mal',4,'Old Testament'],
+['Matthew','Matt',28,'New Testament'],['Mark','Mark',16,'New Testament'],['Luke','Luke',24,'New Testament'],['John','John',21,'New Testament'],['Acts','Acts',28,'New Testament'],['Romans','Rom',16,'New Testament'],['1 Corinthians','1Cor',16,'New Testament'],['2 Corinthians','2Cor',13,'New Testament'],['Galatians','Gal',6,'New Testament'],['Ephesians','Eph',6,'New Testament'],['Philippians','Phil',4,'New Testament'],['Colossians','Col',4,'New Testament'],['1 Thessalonians','1Thess',5,'New Testament'],['2 Thessalonians','2Thess',3,'New Testament'],['1 Timothy','1Tim',6,'New Testament'],['2 Timothy','2Tim',4,'New Testament'],['Titus','Titus',3,'New Testament'],['Philemon','Phlm',1,'New Testament'],['Hebrews','Heb',13,'New Testament'],['James','Jas',5,'New Testament'],['1 Peter','1Pet',5,'New Testament'],['2 Peter','2Pet',3,'New Testament'],['1 John','1John',5,'New Testament'],['2 John','2John',1,'New Testament'],['3 John','3John',1,'New Testament'],['Jude','Jude',1,'New Testament'],['Revelation','Rev',22,'New Testament']
+];
+const CDN='https://cdn.jsdelivr.net/gh/midvash/bible-data@main/versions/en/kjv/books/';
+const el=()=>document.getElementById('screen');
+const store={get(k,d){try{return JSON.parse(localStorage.getItem('ymb_'+k))??d}catch{return d}},set(k,v){try{localStorage.setItem('ymb_'+k,JSON.stringify(v))}catch{}}};
+let current={book:'Genesis',chapter:1}, selectedVerse=null;
+let dbPromise=null;
+function db(){if(dbPromise)return dbPromise;dbPromise=new Promise((resolve,reject)=>{const r=indexedDB.open('young_minds_bible',1);r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('books'))d.createObjectStore('books',{keyPath:'osis'});};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});return dbPromise;}
+async function dbGet(osis){const d=await db();return new Promise((res,rej)=>{const tx=d.transaction('books','readonly');const q=tx.objectStore('books').get(osis);q.onsuccess=()=>res(q.result?.data||null);q.onerror=()=>rej(q.error);});}
+async function dbPut(osis,data){const d=await db();return new Promise((res,rej)=>{const tx=d.transaction('books','readwrite');tx.objectStore('books').put({osis,data,at:Date.now()});tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);});}
+async function dbCount(){const d=await db();return new Promise((res,rej)=>{const tx=d.transaction('books','readonly');const q=tx.objectStore('books').count();q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});}
+async function fetchBook(osis){
+  const info=BOOKS.find(b=>b[1]===osis); if(!info)throw new Error('Unknown Bible book.');
+  const cached=await dbGet(osis); if(cached && validateBookData(cached,info[2]))return cached;
+  if(!navigator.onLine)throw new Error('This book is not downloaded yet. Connect once and tap “Download Full Bible Offline”.');
+  const resp=await fetch(CDN+osis+'.json',{cache:'no-cache'});if(!resp.ok)throw new Error('Could not load Bible data.');
+  const data=await resp.json(); if(!validateBookData(data,info[2]))throw new Error('Downloaded Bible data failed validation. Please try again.');
+  await dbPut(osis,data); return data;
+}
+function setNav(i){document.querySelectorAll('.nav').forEach((n,k)=>n.classList.toggle('active',i===k));}
+function meta(book){return BOOKS.find(b=>b[0]===book)}
+function bookIndex(book){return BOOKS.findIndex(b=>b[0]===book)}
+function neighbour(book,chapter,delta){
+  const i=bookIndex(book); if(i<0)return null;
+  const max=BOOKS[i][2];
+  if(delta<0){ if(chapter>1)return {book,chapter:chapter-1}; if(i===0)return null; return {book:BOOKS[i-1][0],chapter:BOOKS[i-1][2]}; }
+  if(chapter<max)return {book,chapter:chapter+1}; if(i>=BOOKS.length-1)return null; return {book:BOOKS[i+1][0],chapter:1};
+}
+function parseSavedRef(ref){ const m=String(ref).match(/^(.+) (\d+):(\d+)$/); return m?{book:m[1],chapter:Number(m[2]),verse:Number(m[3])}:null; }
+function validateBookData(data,expected){
+  return !!data && Array.isArray(data.chapters) && data.chapters.length===expected && data.chapters.every((c,idx)=>Number(c.chapter||c.number||idx+1)>=1 && Array.isArray(c.verses) && c.verses.length>0 && c.verses.every(v=>String(v.text||'').trim().length>0));
+}
+const ALIASES={gen:'Genesis',ge:'Genesis',ex:'Exodus',exo:'Exodus',lev:'Leviticus',num:'Numbers',deut:'Deuteronomy',dt:'Deuteronomy',ps:'Psalms',psalm:'Psalms',psalms:'Psalms',prov:'Proverbs',isa:'Isaiah',jer:'Jeremiah',matt:'Matthew',mt:'Matthew',mk:'Mark',lk:'Luke',jn:'John',jhn:'John',rom:'Romans',rev:'Revelation'};
+function resolveBookName(raw){const q=String(raw).trim().toLowerCase().replace(/\s+/g,' ');const exact=BOOKS.find(b=>b[0].toLowerCase()===q);if(exact)return exact;const alias=ALIASES[q];return alias?BOOKS.find(b=>b[0]===alias):null;}
+function refKey(book,chapter,verse){return `${book} ${chapter}:${verse}`}
+function chooseVerse(ref){selectedVerse=ref;document.querySelectorAll('.verse').forEach(x=>x.classList.toggle('selected',x.dataset.ref===ref));document.getElementById('verseActions')?.classList.remove('hidden')}
+function toggleSaved(kind,ref){let a=store.get(kind,[]);let i=a.indexOf(ref);i>=0?a.splice(i,1):a.push(ref);store.set(kind,a);reader(current.book,current.chapter)}
+function addNote(ref){let notes=store.get('notes',{});let v=prompt('Write a private note for '+ref,notes[ref]||'');if(v===null)return;if(v.trim())notes[ref]=v.trim();else delete notes[ref];store.set('notes',notes);reader(current.book,current.chapter)}
+async function home(){setNav(0);let n=0;try{n=await dbCount()}catch{}const all=n===66;el().innerHTML=`<div class="hero"><h1>Good day 👋</h1><p>Read the Bible chapter by chapter. Notes, highlights, bookmarks and reading position stay on this device.</p><div class="row"><button class="btn primary" onclick="(()=>{let x=store.get('last',{book:'Genesis',chapter:1});reader(x.book,x.chapter)})()">Continue reading</button><button class="btn ghost" onclick="books()">Choose a book</button></div></div><div class="notice ${all?'ok':''}"><b>${all?'✓ Full Bible saved offline':'Offline Bible setup'}</b><br>${all?'All 66 books are stored on this browser. You can disconnect the internet and keep reading.':'Open this file while connected once, then tap the button below to save all 66 books for offline reading.'}<div class="row"><button class="btn ${all?'ghost':'primary'}" onclick="downloadAll()">${all?'Refresh offline Bible':'Download Full Bible Offline'}</button></div></div><div class="section"><h2>Today</h2><div class="card" onclick="reader('John',3)"><b>Verse of the Day</b><div class="small">John 3:16</div><p style="line-height:1.5;margin-bottom:0">For God so loved the world...</p></div></div><div class="section"><h2>Quick access</h2><div class="grid"><div class="card" onclick="books()"><b>📚 Read Bible</b><span class="small">66 books • 1,189 chapters</span></div><div class="card" onclick="searchScreen()"><b>🔎 Search</b><span class="small">Reference or text</span></div><div class="card" onclick="saved()"><b>★ Saved</b><span class="small">Bookmarks & notes</span></div><div class="card" onclick="downloadAll()"><b>⬇ Offline Bible</b><span class="small">Save all 66 books</span></div></div></div>`}
+function books(){setNav(1);el().innerHTML=`<div class="section"><h2>Books of the Bible</h2><div class="list">${BOOKS.map(x=>`<div class="book" onclick="chapters('${x[0].replaceAll("'","\\'")}',${x[2]})"><div><b>${x[0]}</b><div class="small">${x[3]}</div></div><span class="pill">${x[2]} chapters</span></div>`).join('')}</div></div>`}
+function chapters(book,count){current.book=book;el().innerHTML=`<div class="section"><button class="back" onclick="books()">← Books</button><h2>${book}</h2><div class="chapters">${Array.from({length:count},(_,i)=>`<button class="chapter" onclick="reader('${book.replaceAll("'","\\'")}',${i+1})">${i+1}</button>`).join('')}</div></div>`}
+async function reader(book,chapter){
+  const m=meta(book); if(!m || chapter<1 || chapter>m[2]){books();return;}
+  current={book,chapter};store.set('last',{book,chapter});selectedVerse=null;
+  el().innerHTML=`<div class="center"><div class="status">Loading ${book} ${chapter}…</div><div class="small">If this book is already downloaded, it will open without internet.</div></div>`;
+  try{
+    const data=await fetchBook(m[1]);const ch=data.chapters.find(c=>Number(c.chapter||c.number)===Number(chapter));if(!ch)throw new Error('Chapter not found.');
+    const bookmarks=store.get('bookmarks',[]),highlights=store.get('highlights',[]),notes=store.get('notes',{});const prev=neighbour(book,chapter,-1),next=neighbour(book,chapter,1);
+    el().innerHTML=`<div class="reader"><button class="back" onclick="chapters('${book.replaceAll("'","\\'")}',${m[2]})">← ${book}</button><h2>${book} ${chapter}</h2>${ch.verses.map(v=>{const ref=refKey(book,chapter,v.number);return `<div class="verse" data-ref="${ref}" onclick="chooseVerse('${ref.replaceAll("'","\\'")}')" style="${highlights.includes(ref)?'background:#fff0a8;':''}"><span class="num">${v.number}</span>${escapeHtml(v.text)}${bookmarks.includes(ref)?' ★':''}${notes[ref]?' 📝':''}</div>`}).join('')}<div class="row" style="margin:18px 0 8px"><button class="btn ghost" ${prev?'':'disabled'} onclick="${prev?`reader('${prev.book.replaceAll("'","\\'")}',${prev.chapter})`:''}">← Previous</button><button class="btn primary" ${next?'':'disabled'} onclick="${next?`reader('${next.book.replaceAll("'","\\'")}',${next.chapter})`:''}">Next →</button></div><div id="verseActions" class="actions hidden"><button class="btn ghost" onclick="toggleSaved('bookmarks',selectedVerse)">★ Bookmark</button><button class="btn ghost" onclick="toggleSaved('highlights',selectedVerse)">🖍 Highlight</button><button class="btn ghost" onclick="addNote(selectedVerse)">📝 Note</button></div></div>`;
+  }catch(e){el().innerHTML=`<div class="section"><button class="back" onclick="chapters('${book.replaceAll("'","\\'")}',${m[2]})">← ${book}</button><div class="notice"><b>Chapter text is not stored yet.</b><br>${escapeHtml(e.message)}<div class="row"><button class="btn primary" onclick="downloadAll()">Download Full Bible Offline</button></div></div></div>`}
+}
+function searchScreen(){setNav(2);el().innerHTML=`<div class="section"><h2>Search Bible</h2><input class="search" id="q" placeholder="John 3:16 or love" onkeydown="if(event.key==='Enter')doSearch()"><div class="row"><button class="btn primary" onclick="doSearch()">Search</button></div><div id="results" class="list" style="margin-top:14px"></div></div>`}
+async function doSearch(){
+  const q=document.getElementById('q').value.trim(),r=document.getElementById('results');if(!q)return;
+  const ref=q.match(/^(.+?)\s+(\d+)(?::(\d+))?$/i);
+  if(ref){const name=resolveBookName(ref[1]);if(name){const ch=Number(ref[2]),vs=ref[3]?Number(ref[3]):null;if(ch>=1&&ch<=name[2]){if(!vs){reader(name[0],ch);return;}r.innerHTML='<div class="card">Searching verse…</div>';try{const data=await fetchBook(name[1]);const c=data.chapters.find(x=>Number(x.chapter||x.number)===ch),v=c?.verses.find(x=>Number(x.number)===vs);r.innerHTML=v?`<div class="book" onclick="reader('${name[0].replaceAll("'","\\'")}',${ch})"><div><b>${name[0]} ${ch}:${vs}</b><div class="small">${escapeHtml(v.text)}</div></div></div>`:'<div class="card">Verse not found.</div>';return}catch(e){r.innerHTML=`<div class="notice">${escapeHtml(e.message)}</div>`;return}}}}
+  r.innerHTML='<div class="card"><b>Searching downloaded Bible…</b><div class="small">Searching up to 66 offline books.</div></div>';const hits=[],needle=q.toLowerCase();
+  for(let bi=0;bi<BOOKS.length;bi++){const b=BOOKS[bi],data=await dbGet(b[1]);if(data){for(const c of data.chapters){for(const v of c.verses){if(String(v.text).toLowerCase().includes(needle)){hits.push({book:b[0],chapter:Number(c.chapter||c.number),verse:Number(v.number),text:v.text});if(hits.length>=50)break;}}if(hits.length>=50)break;}}if(hits.length>=50)break;if(bi%4===3)await new Promise(resolve=>setTimeout(resolve,0));}
+  r.innerHTML=hits.length?hits.map(h=>`<div class="book" onclick="reader('${h.book.replaceAll("'","\\'")}',${h.chapter})"><div><b>${h.book} ${h.chapter}:${h.verse}</b><div class="small">${escapeHtml(h.text)}</div></div></div>`).join(''):'<div class="notice">No match found in the books currently saved offline. Download the full Bible first for complete text search.</div>';
+}
+function saved(){
+  setNav(3);const b=store.get('bookmarks',[]),h=store.get('highlights',[]),n=store.get('notes',{}),last=store.get('last',null);
+  const links=(arr,empty)=>arr.length?arr.map(ref=>{const x=parseSavedRef(ref);return x?`<div style="padding:5px 0;cursor:pointer" onclick="reader('${x.book.replaceAll("'","\\'")}',${x.chapter})">${escapeHtml(ref)}</div>`:`<div>${escapeHtml(ref)}</div>`}).join(''):empty;
+  el().innerHTML=`<div class="section"><h2>Saved on this device</h2><div class="card"><b>★ Bookmarks (${b.length})</b><div class="small">${links(b,'No bookmarks yet')}</div></div><div class="card" style="margin-top:10px"><b>🖍 Highlights (${h.length})</b><div class="small">${links(h,'No highlights yet')}</div></div><div class="card" style="margin-top:10px"><b>📝 Notes (${Object.keys(n).length})</b><div class="small">${Object.entries(n).map(([k,v])=>{const x=parseSavedRef(k);return `<div style="padding:5px 0;${x?'cursor:pointer':''}" ${x?`onclick="reader('${x.book.replaceAll("'","\\'")}',${x.chapter})"`:''}><b>${escapeHtml(k)}</b>: ${escapeHtml(v)}</div>`}).join('')||'No notes yet'}</div></div>${last?`<div class="card" style="margin-top:10px" onclick="reader('${last.book.replaceAll("'","\\'")}',${last.chapter})"><b>↻ Continue reading</b><div class="small">${last.book} ${last.chapter}</div></div>`:''}</div>`;
+}
+async function downloadAll(){
+  if(!navigator.onLine){alert('Connect to the internet once to download the full Bible. After it is saved, you can read offline.');return;}
+  el().innerHTML=`<div class="section"><h2>Downloading Full Bible</h2><div class="card"><div id="dlStatus" class="status">Preparing…</div><div class="small">Books are validated before they are marked saved. You can safely retry if the connection drops.</div><div class="progress"><div id="bar"></div></div></div></div>`;let done=0;
+  for(const b of BOOKS){const status=document.getElementById('dlStatus');if(!status)return;status.textContent=`${done+1} of 66 — ${b[0]}`;try{const existing=await dbGet(b[1]);if(!validateBookData(existing,b[2])){const resp=await fetch(CDN+b[1]+'.json',{cache:'no-cache'});if(!resp.ok)throw new Error('Network response '+resp.status);const data=await resp.json();if(!validateBookData(data,b[2]))throw new Error('Book validation failed');await dbPut(b[1],data);}done++;document.getElementById('bar').style.width=(done/66*100)+'%';if(done%4===0)await new Promise(resolve=>setTimeout(resolve,0));}catch(e){status.textContent=`Stopped at ${b[0]}. Check the internet and tap Download again. Already saved books are kept.`;return;}}
+  document.getElementById('dlStatus').textContent='✓ All 66 books validated and saved for offline reading';setTimeout(home,700);
+}
+function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+home();
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{
+  "translation": "WEB",
+  "translation_name": "World English Bible",
+  "books": [
+    {
+      "name": "Genesis",
+      "chapters": [
+        {
+          "number": 1,
+          "verses": [
+            {"number": 1, "text": "In the beginning, God created the heavens and the earth."},
+            {"number": 2, "text": "The earth was formless and empty. Darkness was on the surface of the deep and God's Spirit was hovering over the surface of the waters."},
+            {"number": 3, "text": "God said, “Let there be light,” and there was light."},
+            {"number": 4, "text": "God saw the light, and saw that it was good. God divided the light from the darkness."},
+            {"number": 5, "text": "God called the light “day”, and the darkness he called “night”. There was evening and there was morning, the first day."}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Psalms",
+      "chapters": [
+        {
+          "number": 23,
+          "verses": [
+            {"number": 1, "text": "Yahweh is my shepherd: I shall lack nothing."},
+            {"number": 2, "text": "He makes me lie down in green pastures. He leads me beside still waters."},
+            {"number": 3, "text": "He restores my soul. He guides me in the paths of righteousness for his name's sake."},
+            {"number": 4, "text": "Even though I walk through the valley of the shadow of death, I will fear no evil, for you are with me. Your rod and your staff, they comfort me."}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "John",
+      "chapters": [
+        {
+          "number": 3,
+          "verses": [
+            {"number": 16, "text": "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life."},
+            {"number": 17, "text": "For God didn't send his Son into the world to judge the world, but that the world should be saved through him."}
+          ]
+        }
+      ]
+    }
+  ]
+}

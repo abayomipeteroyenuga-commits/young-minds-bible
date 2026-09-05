@@ -1,0 +1,9 @@
+YOUNG MINDS BIBLE — FULL CHAPTER PREVIEW
+
+1. Double-click OFFLINE_PREVIEW.html.
+2. While connected to the internet once, tap “Download Full Bible Offline”.
+3. Wait until it says all 66 books are saved.
+4. You can then disconnect the internet and read Genesis through Revelation from this browser preview.
+5. Tap Bible > choose a book > choose a chapter to see the complete chapter verses.
+
+The Android/Play Store build is designed to package the Bible data with the app so end users do not need this browser-download step.

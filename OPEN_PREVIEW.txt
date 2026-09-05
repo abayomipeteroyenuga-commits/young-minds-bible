@@ -1,0 +1,14 @@
+YOUNG MINDS BIBLE — QUICK PREVIEW
+
+To see the interface immediately on a computer:
+1. Open the folder: preview
+2. Double-click: index.html
+
+This preview runs locally in a browser and does not require internet.
+It demonstrates Home, Bible books, chapters, reader, Search and Saved screens.
+
+IMPORTANT:
+The actual Android APK still requires Flutter + Android build tooling.
+The repository contains a GitHub Actions workflow at:
+.github/workflows/build-android.yml
+which is configured to create both APK and AAB in a Flutter-enabled CI environment.
