@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0a2b62">
+  <meta name="description" content="Young Minds Bible — read, search, bookmark and take notes in the King James Bible.">
+  <title>Young Minds Bible</title>
+  <link rel="icon" href="favicon.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <button id="menuBtn" class="icon-btn" aria-label="Menu">☰</button>
+      <div class="brand-mini"><img src="assets/images/pastor_abayomi_logo.jpg" alt="PastorAbayomi Bible Stories"><span>Young Minds Bible</span></div>
+      <button id="themeBtn" class="icon-btn" aria-label="Toggle theme">◐</button>
+    </header>
+
+    <aside id="drawer" class="drawer" aria-hidden="true">
+      <div class="drawer-brand"><img src="assets/images/pastor_abayomi_logo.jpg" alt="PastorAbayomi Bible Stories"><h2>Young Minds Bible</h2><p>Read • Learn • Grow</p></div>
+      <nav>
+        <button data-view="home">⌂ Home</button>
+        <button data-view="books">📖 Bible Books</button>
+        <button data-view="search">🔎 Search</button>
+        <button data-view="bookmarks">🔖 Bookmarks</button>
+        <button data-view="notes">📝 Notes</button>
+        <button data-view="about">ℹ About</button>
+      </nav>
+    </aside>
+    <div id="scrim" class="scrim"></div>
+
+    <main>
+      <section id="home" class="view active">
+        <div class="hero">
+          <img class="hero-logo" src="assets/images/pastor_abayomi_logo.jpg" alt="PastorAbayomi Bible Stories logo">
+          <div>
+            <span class="eyebrow">PASTORABAYOMI BIBLE STORIES</span>
+            <h1>Young Minds Bible</h1>
+            <p>Read God's Word, search verses, bookmark favourites and keep personal notes — directly in your browser.</p>
+            <div class="hero-actions"><button class="primary" data-view="books">Start Reading</button><button class="secondary" data-view="search">Search Bible</button></div>
+          </div>
+        </div>
+        <div class="cards">
+          <article><b>66</b><span>Books of the Bible</span></article>
+          <article><b>1,189</b><span>Chapters</span></article>
+          <article><b>🔖</b><span>Local Bookmarks</span></article>
+          <article><b>📝</b><span>Personal Notes</span></article>
+        </div>
+        <div class="panel daily"><h2>Daily Bible Reading</h2><p id="dailyVerse">Loading a verse…</p><small id="dailyRef"></small></div>
+      </section>
+
+      <section id="books" class="view"><div class="section-head"><div><span class="eyebrow">SCRIPTURE</span><h1>Bible Books</h1></div><input id="bookFilter" type="search" placeholder="Filter books…" autocomplete="off"></div><div id="booksGrid" class="books-grid"></div></section>
+
+      <section id="reader" class="view"><button id="backBooks" class="back">← Books</button><div class="reader-head"><div><span id="readerTestament" class="eyebrow"></span><h1 id="readerTitle"></h1></div><select id="chapterSelect" aria-label="Chapter"></select></div><div id="readerStatus" class="status"></div><div id="verses" class="verses"></div></section>
+
+      <section id="search" class="view"><div class="section-head"><div><span class="eyebrow">FIND SCRIPTURE</span><h1>Search Bible</h1></div></div><form id="searchForm" class="search-box"><input id="searchInput" type="search" placeholder="e.g. faith, love, Psalm 23" autocomplete="off"><button class="primary" type="submit">Search</button></form><div id="searchStatus" class="status">Enter a word or phrase. The Bible text is loaded securely from the public KJV source when needed.</div><div id="searchResults" class="results"></div></section>
+
+      <section id="bookmarks" class="view"><div class="section-head"><div><span class="eyebrow">SAVED</span><h1>Bookmarks</h1></div></div><div id="bookmarkList" class="results"></div></section>
+      <section id="notes" class="view"><div class="section-head"><div><span class="eyebrow">PERSONAL</span><h1>Notes</h1></div></div><div id="noteList" class="results"></div></section>
+      <section id="about" class="view"><div class="about panel"><img src="assets/images/pastor_abayomi_logo.jpg" alt="PastorAbayomi Bible Stories"><div><span class="eyebrow">ABOUT</span><h1>Young Minds Bible</h1><p>A strict browser-based Bible web app from PastorAbayomi Bible Stories. No Flutter or Android runtime is required for this web version.</p><p>The Bible reader uses the King James Version data source and stores bookmarks, notes and preferences on the user's own browser.</p></div></div></section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Main navigation"><button data-view="home">⌂<span>Home</span></button><button data-view="books">📖<span>Books</span></button><button data-view="search">⌕<span>Search</span></button><button data-view="bookmarks">🔖<span>Saved</span></button><button data-view="notes">📝<span>Notes</span></button></nav>
+  </div>
+  <script src="app.js" defer></script>
+</body>
+</html>
