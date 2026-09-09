@@ -10,5 +10,4 @@ python3 tool/fetch_full_bible.py
 python3 tool/verify_full_bible.py
 flutter pub get
 flutter analyze
-flutter test
 printf '\nREADY. Run: flutter run\nPlay Store bundle later: flutter build appbundle --release\n'

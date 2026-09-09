@@ -1,0 +1,69 @@
+workflows:
+  young-minds-bible-android:
+    name: Young Minds Bible Android
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      java: 17
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache
+        - $HOME/.gradle/caches
+    scripts:
+      - name: Prepare Android project
+        script: |
+          flutter create . --platforms=android --org org.pastorabayomi --project-name young_minds_bible
+      - name: Install Flutter packages
+        script: flutter pub get
+      - name: Generate launcher icon from PastorAbayomi logo
+        script: dart run flutter_launcher_icons
+      - name: Prepare complete offline KJV Bible
+        script: python3 tool/fetch_full_bible.py
+      - name: Verify complete offline Bible
+        script: python3 tool/verify_full_bible.py
+      - name: Static analysis
+        script: flutter analyze
+      - name: Build release APK
+        script: flutter build apk --release
+      - name: Build release AAB
+        script: flutter build appbundle --release
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/release/*.aab
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients: []
+        notify:
+          success: false
+          failure: false
+
+  young-minds-bible-web:
+    name: Young Minds Bible Web
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache
+    scripts:
+      - name: Install Flutter packages
+        script: flutter pub get
+      - name: Prepare complete offline KJV Bible
+        script: python3 tool/fetch_full_bible.py
+      - name: Verify complete offline Bible
+        script: python3 tool/verify_full_bible.py
+      - name: Static analysis
+        script: flutter analyze
+      - name: Build web release
+        script: flutter build web --release
+    artifacts:
+      - build/web/**
+    publishing:
+      email:
+        recipients: []
+        notify:
+          success: false
+          failure: false

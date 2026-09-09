@@ -11,14 +11,12 @@ class ChapterScreen extends StatefulWidget {
     required this.bookIndex,
     required this.chapterIndex,
     required this.prefs,
-    this.completionReference,
   });
 
   final BibleLibrary library;
   final int bookIndex;
   final int chapterIndex;
   final PreferencesService prefs;
-  final String? completionReference;
 
   @override
   State<ChapterScreen> createState() => _ChapterScreenState();
@@ -172,41 +170,22 @@ class _ChapterScreenState extends State<ChapterScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Row(
             children: [
-              if (widget.completionReference == '${book.name} ${chapter.number}') ...[
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: () => Navigator.pop(context, true),
-                    icon: const Icon(Icons.check_circle_outline),
-                    label: const Text('Mark today’s reading complete'),
-                  ),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _move(-1),
+                  icon: const Icon(Icons.chevron_left),
+                  label: const Text('Previous'),
                 ),
-                const SizedBox(height: 8),
-              ],
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: bookIndex == 0 && chapterIndex == 0 ? null : () => _move(-1),
-                      icon: const Icon(Icons.chevron_left),
-                      label: const Text('Previous'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton.icon(
-                      onPressed: bookIndex == widget.library.books.length - 1 &&
-                              chapterIndex == book.chapters.length - 1
-                          ? null
-                          : () => _move(1),
-                      icon: const Icon(Icons.chevron_right),
-                      label: const Text('Next'),
-                    ),
-                  ),
-                ],
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () => _move(1),
+                  icon: const Icon(Icons.chevron_right),
+                  label: const Text('Next'),
+                ),
               ),
             ],
           ),

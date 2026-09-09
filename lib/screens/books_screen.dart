@@ -18,9 +18,10 @@ class _BooksScreenState extends State<BooksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final splitIndex = widget.library.books.length < 39 ? widget.library.books.length : 39;
-    final start = newTestament ? splitIndex : 0;
-    final end = newTestament ? widget.library.books.length : splitIndex;
+    final start = newTestament ? 39 : 0;
+    final end = newTestament
+        ? widget.library.books.length
+        : (widget.library.books.length < 39 ? widget.library.books.length : 39);
     final books = widget.library.books.sublist(start, end);
 
     return Column(
