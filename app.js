@@ -1,4 +1,5 @@
-const DATA_URL='https://raw.githubusercontent.com/midvash/bible-data/main/versions/en/kjv/kjv.json';
+const DATA_BASE='https://raw.githubusercontent.com/midvash/bible-data/v1.0.0/versions/en/kjv/books/';
+const OSIS=['Gen','Exod','Lev','Num','Deut','Josh','Judg','Ruth','1Sam','2Sam','1Kgs','2Kgs','1Chr','2Chr','Ezra','Neh','Esth','Job','Ps','Prov','Eccl','Song','Isa','Jer','Lam','Ezek','Dan','Hos','Joel','Amos','Obad','Jonah','Mic','Nah','Hab','Zeph','Hag','Zech','Mal','Matt','Mark','Luke','John','Acts','Rom','1Cor','2Cor','Gal','Eph','Phil','Col','1Thess','2Thess','1Tim','2Tim','Titus','Phlm','Heb','Jas','1Pet','2Pet','1John','2John','3John','Jude','Rev'];
 const BOOKS=[
 ['Genesis',50,'OT'],['Exodus',40,'OT'],['Leviticus',27,'OT'],['Numbers',36,'OT'],['Deuteronomy',34,'OT'],['Joshua',24,'OT'],['Judges',21,'OT'],['Ruth',4,'OT'],['1 Samuel',31,'OT'],['2 Samuel',24,'OT'],['1 Kings',22,'OT'],['2 Kings',25,'OT'],['1 Chronicles',29,'OT'],['2 Chronicles',36,'OT'],['Ezra',10,'OT'],['Nehemiah',13,'OT'],['Esther',10,'OT'],['Job',42,'OT'],['Psalms',150,'OT'],['Proverbs',31,'OT'],['Ecclesiastes',12,'OT'],['Song of Solomon',8,'OT'],['Isaiah',66,'OT'],['Jeremiah',52,'OT'],['Lamentations',5,'OT'],['Ezekiel',48,'OT'],['Daniel',12,'OT'],['Hosea',14,'OT'],['Joel',3,'OT'],['Amos',9,'OT'],['Obadiah',1,'OT'],['Jonah',4,'OT'],['Micah',7,'OT'],['Nahum',3,'OT'],['Habakkuk',3,'OT'],['Zephaniah',3,'OT'],['Haggai',2,'OT'],['Zechariah',14,'OT'],['Malachi',4,'OT'],['Matthew',28,'NT'],['Mark',16,'NT'],['Luke',24,'NT'],['John',21,'NT'],['Acts',28,'NT'],['Romans',16,'NT'],['1 Corinthians',16,'NT'],['2 Corinthians',13,'NT'],['Galatians',6,'NT'],['Ephesians',6,'NT'],['Philippians',4,'NT'],['Colossians',4,'NT'],['1 Thessalonians',5,'NT'],['2 Thessalonians',3,'NT'],['1 Timothy',6,'NT'],['2 Timothy',4,'NT'],['Titus',3,'NT'],['Philemon',1,'NT'],['Hebrews',13,'NT'],['James',5,'NT'],['1 Peter',5,'NT'],['2 Peter',3,'NT'],['1 John',5,'NT'],['2 John',1,'NT'],['3 John',1,'NT'],['Jude',1,'NT'],['Revelation',22,'NT']];
 let bible=null,currentBook=0,currentChapter=1;
@@ -8,9 +9,28 @@ function openDrawer(){$('#drawer').classList.add('open');$('#scrim').classList.a
 function closeDrawer(){$('#drawer').classList.remove('open');$('#scrim').classList.remove('show');$('#drawer').setAttribute('aria-hidden','true')}
 function save(key,val){localStorage.setItem(key,JSON.stringify(val))}function load(key,fallback=[]){try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}}
 function renderBooks(filter=''){const q=filter.trim().toLowerCase();$('#booksGrid').innerHTML=BOOKS.map((b,i)=>({b,i})).filter(x=>x.b[0].toLowerCase().includes(q)).map(({b,i})=>`<button class="book-card" data-book="${i}"><b>${b[0]}</b><small>${b[1]} chapter${b[1]===1?'':'s'} • ${b[2]==='OT'?'Old':'New'} Testament</small></button>`).join('');$$('[data-book]').forEach(btn=>btn.onclick=()=>openBook(+btn.dataset.book,1));}
-async function loadBible(){if(bible)return bible;const cached=load('ymb_bible_cache',null);if(cached?.books?.length===66){bible=cached;return bible}try{const r=await fetch(DATA_URL,{cache:'force-cache'});if(!r.ok)throw new Error(`HTTP ${r.status}`);const raw=await r.json();bible=normalize(raw);if(bible.books.length!==66)throw new Error('Incomplete Bible data');try{save('ymb_bible_cache',bible)}catch(e){console.info('Bible too large for localStorage; browser cache will be used.')}return bible}catch(e){throw new Error('Bible text could not be loaded. Check your internet connection and try again.');}}
+async function fetchBook(index){
+  const key=`ymb_book_${OSIS[index]}`;
+  const cached=load(key,null);
+  if(cached?.chapters?.length)return cached;
+  const url=`${DATA_BASE}${OSIS[index]}.json`;
+  const r=await fetch(url,{cache:'force-cache',mode:'cors'});
+  if(!r.ok)throw new Error(`Bible data request failed (${r.status}).`);
+  const raw=await r.json();
+  const book=normalize({books:[raw]}).books[0];
+  if(!book?.chapters?.length)throw new Error('The Bible data received was incomplete.');
+  try{save(key,book)}catch(e){}
+  return book;
+}
+async function loadBible(){
+  if(bible?.books?.length===66)return bible;
+  const books=[];
+  for(let i=0;i<66;i++) books.push(await fetchBook(i));
+  bible={books};
+  return bible;
+}
 function normalize(raw){const rb=Array.isArray(raw)?raw:(raw.books||[]);return{books:rb.map((b,bi)=>({name:b.englishName||b.name||b.book||BOOKS[bi]?.[0]||`Book ${bi+1}`,chapters:(b.chapters||[]).map((c,ci)=>({number:+(c.chapter||c.number||ci+1),verses:(c.verses||[]).map((v,vi)=>({number:+(v.number||v.verse||vi+1),text:String(v.text||'').trim()}))}))}))}}
-async function openBook(bookIndex,chapter=1){currentBook=bookIndex;currentChapter=chapter;showView('reader');$('#readerTitle').textContent=BOOKS[bookIndex][0];$('#readerTestament').textContent=BOOKS[bookIndex][2]==='OT'?'OLD TESTAMENT':'NEW TESTAMENT';$('#chapterSelect').innerHTML=Array.from({length:BOOKS[bookIndex][1]},(_,i)=>`<option value="${i+1}" ${i+1===chapter?'selected':''}>Chapter ${i+1}</option>`).join('');$('#readerStatus').textContent='Loading chapter…';$('#verses').innerHTML='';try{const data=await loadBible();const book=findBook(data,BOOKS[bookIndex][0],bookIndex);const ch=book?.chapters?.[chapter-1];if(!ch)throw new Error('Chapter not found in Bible data.');$('#readerStatus').textContent='';renderVerses(book,chapter,ch.verses||[]);}catch(e){$('#readerStatus').textContent=e.message;}}
+async function openBook(bookIndex,chapter=1){currentBook=bookIndex;currentChapter=chapter;showView('reader');$('#readerTitle').textContent=BOOKS[bookIndex][0];$('#readerTestament').textContent=BOOKS[bookIndex][2]==='OT'?'OLD TESTAMENT':'NEW TESTAMENT';$('#chapterSelect').innerHTML=Array.from({length:BOOKS[bookIndex][1]},(_,i)=>`<option value="${i+1}" ${i+1===chapter?'selected':''}>Chapter ${i+1}</option>`).join('');$('#readerStatus').textContent='Loading chapter…';$('#verses').innerHTML='';try{const book=await fetchBook(bookIndex);const ch=book?.chapters?.[chapter-1];if(!ch)throw new Error('Chapter not found in Bible data.');$('#readerStatus').textContent='';renderVerses(book,chapter,ch.verses||[]);}catch(e){$('#readerStatus').textContent=e.message;}}
 function findBook(data,name,index){const simplify=s=>s.toLowerCase().replace(/[^a-z0-9]/g,'').replace(/^psalms$/,'psalm');const target=simplify(name);return data.books.find(b=>simplify(b.name)===target)||data.books[index];}
 function renderVerses(book,chapter,verses){const marks=load('ymb_bookmarks');$('#verses').innerHTML=verses.map(v=>{const ref=`${BOOKS[currentBook][0]} ${chapter}:${v.number}`,marked=marks.some(x=>x.ref===ref);return `<article class="verse"><span class="num">${v.number}</span><span>${escapeHtml(v.text)}</span><div class="verse-actions"><button data-mark="${encodeURIComponent(ref)}" data-text="${encodeURIComponent(v.text)}">${marked?'✓ Saved':'🔖 Bookmark'}</button><button data-note="${encodeURIComponent(ref)}" data-text="${encodeURIComponent(v.text)}">📝 Note</button></div></article>`}).join('');bindVerseActions();}
 function bindVerseActions(){$$('[data-mark]').forEach(b=>b.onclick=()=>toggleBookmark(decodeURIComponent(b.dataset.mark),decodeURIComponent(b.dataset.text),b));$$('[data-note]').forEach(b=>b.onclick=()=>addNote(decodeURIComponent(b.dataset.note),decodeURIComponent(b.dataset.text)));}

@@ -22,3 +22,7 @@ The app loads the public KJV dataset from:
 The app itself is static. The first Bible-text load therefore requires an internet connection. Site assets are cached by the service worker; browser/network caching may keep the KJV response available later depending on the browser.
 
 For a completely self-contained offline deployment, place the verified 66-book KJV file at `assets/data/kjv.json` and change `DATA_URL` in `app.js` to `./assets/data/kjv.json`.
+
+
+## v1.1 Bible loading fix
+The app now loads the pinned KJV dataset one book at a time instead of downloading the entire 6+ MB Bible JSON in one request. Books are cached by the browser/local storage after loading. This avoids the previous whole-Bible fetch failure.
